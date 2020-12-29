@@ -1,10 +1,5 @@
 package world
 
-import (
-	"math/rand"
-	"time"
-)
-
 const (
 	ALIVE = 1
 	FREE  = 0
@@ -15,6 +10,8 @@ type World struct {
 	matrix [][]int
 	size   int
 }
+
+type Generator func() bool
 
 // Max returns the larger of x or y.
 func max(x, y int) int {
@@ -100,12 +97,11 @@ func (w *World) Next() *World {
 	return newWorld
 }
 
-func Random(size, threshold int) *World {
-	rand.Seed(time.Now().UnixNano())
+func Random(size int, fn Generator) *World {
 	w := NewWorld(size)
 	for x := 0; x < size; x++ {
 		for y := 0; y < size; y++ {
-			alive := rand.Intn(100) >= threshold
+			alive := fn()
 			w.SetState(x, y, alive)
 		}
 	}

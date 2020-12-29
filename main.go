@@ -1,91 +1,44 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"time"
 
-	"github.com/gdamore/tcell/v2"
+	"github.com/sciack/life/painter"
 	"github.com/sciack/life/world"
 )
 
 const (
+	// SIZE is the size of the grid
 	SIZE = 15
+	// THRESHOLD tune the random grid population, higher the number less populated is the grid (<100)
+	THRESHOLD = 98
 )
 
-func initScreen() tcell.Screen {
-	s, err := tcell.NewScreen()
-	if err != nil {
-		log.Fatalf("%+v", err)
-	}
-	if err := s.Init(); err != nil {
-		log.Fatalf("%+v", err)
-	}
-	return s
-}
-
-func printText(w *world.World, s tcell.Screen, blank, alive tcell.Style) {
-	drawBox(s, 0, 0, SIZE+2, SIZE+2, alive)
+func printText(w *world.World, paint *painter.Painter, iteration int) {
+	paint.DrawText(0, 0, fmt.Sprintf("Iteration %v", iteration))
+	paint.StartDrawing(SIZE+1, 2)
 	for y := 0; y < SIZE; y++ {
 		for x := 0; x < SIZE; x++ {
 			if w.IsAlive(x, y) {
-				s.SetContent(x+1, y+1, tcell.RuneCkBoard, nil, alive)
+				paint.DrawAlive(x, y)
 			} else {
-				s.SetContent(x+1, y+1, ' ', nil, alive)
+				paint.DrawEmpty(x, y)
 			}
 		}
 	}
-	s.Show()
 
-}
-
-func drawBox(s tcell.Screen, x1, y1, x2, y2 int, style tcell.Style) {
-	if y2 < y1 {
-		y1, y2 = y2, y1
-	}
-	if x2 < x1 {
-		x1, x2 = x2, x1
-	}
-
-	// Fill background
-	for row := y1; row <= y2; row++ {
-		for col := x1; col <= x2; col++ {
-			s.SetContent(col, row, ' ', nil, style)
-		}
-	}
-
-	// Draw borders
-	for col := x1; col <= x2; col++ {
-		s.SetContent(col, y1, tcell.RuneHLine, nil, style)
-		s.SetContent(col, y2, tcell.RuneHLine, nil, style)
-	}
-	for row := y1 + 1; row < y2; row++ {
-		s.SetContent(x1, row, tcell.RuneVLine, nil, style)
-		s.SetContent(x2, row, tcell.RuneVLine, nil, style)
-	}
-
-	// Only draw corners if necessary
-	if y1 != y2 && x1 != x2 {
-		s.SetContent(x1, y1, tcell.RuneULCorner, nil, style)
-		s.SetContent(x2, y1, tcell.RuneURCorner, nil, style)
-		s.SetContent(x1, y2, tcell.RuneLLCorner, nil, style)
-		s.SetContent(x2, y2, tcell.RuneLRCorner, nil, style)
-	}
-
+	paint.EndDrawing()
 }
 
 func main() {
-	s := initScreen()
+	paint := painter.New()
 
-	defStyle := tcell.StyleDefault.Background(tcell.ColorReset).Foreground(tcell.ColorReset)
-	alive := tcell.StyleDefault.Foreground(tcell.ColorLime).Background(tcell.ColorReset)
-	s.SetStyle(defStyle)
-	s.Clear()
-
-	w := world.Random(SIZE)
-	for i := 0; i < 100; i++ {
-		printText(w, s, defStyle, alive)
-		time.Sleep(100 * time.Millisecond)
+	w := world.Random(SIZE, THRESHOLD)
+	for i := 0; i < 100 && w.CountAlive() > 0; i++ {
+		printText(w, paint, i)
+		time.Sleep(200 * time.Millisecond)
 		w = w.Next()
 	}
-	s.Clear()
+
 }

@@ -100,14 +100,25 @@ func (w *World) Next() *World {
 	return newWorld
 }
 
-func Random(size int) *World {
+func Random(size, threshold int) *World {
 	rand.Seed(time.Now().UnixNano())
 	w := NewWorld(size)
 	for x := 0; x < size; x++ {
 		for y := 0; y < size; y++ {
-			alive := rand.Intn(10) >= 3
+			alive := rand.Intn(100) >= threshold
 			w.SetState(x, y, alive)
 		}
 	}
 	return w
+}
+
+func (w *World) CountAlive() int {
+	alive := 0
+	for _, row := range w.matrix {
+		for _, value := range row {
+			alive += value
+		}
+
+	}
+	return alive
 }

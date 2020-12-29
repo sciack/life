@@ -71,3 +71,20 @@ func TestNext(t *testing.T) {
 		t.Errorf("Expecting element in 2 2 is still free, %v", got.matrix)
 	}
 }
+
+func TestAliveShouldBeZeroAtStart(t *testing.T) {
+	w := NewWorld(10)
+	if w.CountAlive() > 0 {
+		t.Fatal("Newly initialized world should be empty")
+	}
+}
+
+func TestAliveShouldReturnTheExpectedValue(t *testing.T) {
+	w := NewWorld(10)
+	for i := 0; i < 10; i++ {
+		w.matrix[i][i] = ALIVE
+	}
+	if w.CountAlive() != 10 {
+		t.Fatalf("Expecting 10 alive, got %v", w.CountAlive())
+	}
+}

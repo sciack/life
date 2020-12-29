@@ -12,6 +12,7 @@ type Painter struct {
 	alive    tcell.Style
 	defStyle tcell.Style
 	vOffset  int
+	hOffset  int
 }
 
 //New create a new Painter struct containing the screen and other useful information
@@ -26,15 +27,18 @@ func New() *Painter {
 	defStyle := tcell.StyleDefault.Background(tcell.ColorReset).Foreground(tcell.ColorReset)
 	alive := tcell.StyleDefault.Foreground(tcell.ColorLime).Background(tcell.ColorReset)
 	s.SetStyle(defStyle)
+	s.DisablePaste()
 	s.Clear()
 
-	return &Painter{screen: s, defStyle: defStyle, alive: alive}
+	return &Painter{screen: s, defStyle: defStyle, alive: alive, hOffset: 20}
 }
 
 func (d *Painter) drawBox(x1, y1, x2, y2 int) {
 	s := d.screen
 	style := d.defStyle
-	x2 = x2 * 2
+	x2 = x2*2 + d.hOffset
+	x1 = x1 + d.hOffset
+
 	if y2 < y1 {
 		y1, y2 = y2, y1
 	}
@@ -80,7 +84,7 @@ func (d *Painter) DrawAlive(x, y int) {
 }
 
 func (d *Painter) drawSymbol(x, y int, symbol rune, style tcell.Style) {
-	xnorm := x*2 + 1 // zero is the border
+	xnorm := x*2 + 1 + d.hOffset // zero is the border
 	d.screen.SetContent(xnorm, y+1+d.vOffset, symbol, nil, style)
 	d.screen.SetContent(xnorm+1, y+1+d.vOffset, symbol, nil, style)
 }
@@ -103,6 +107,7 @@ func (d *Painter) EndDrawing() {
 
 // DrawText draw a text starting from the x,y coordinates using the default color
 func (d *Painter) DrawText(x, y int, text string) {
+	x = x + d.hOffset
 	for index, r := range []rune(text) {
 		d.screen.SetContent(x+index, y, r, nil, d.defStyle)
 	}
@@ -110,6 +115,7 @@ func (d *Painter) DrawText(x, y int, text string) {
 
 // DrawTextHigh dsame as DrawText but with the same color as Alive
 func (d *Painter) DrawTextHigh(x, y int, text string) {
+	x = x + d.hOffset
 	for index, r := range []rune(text) {
 		d.screen.SetContent(x+index, y, r, nil, d.alive)
 	}

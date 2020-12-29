@@ -16,6 +16,7 @@ func painterForTesting() (*Painter, tcell.SimulationScreen) {
 		alive:    alive,
 		defStyle: defStyle,
 		vOffset:  0,
+		hOffset:  0,
 	}, screen
 }
 

@@ -88,3 +88,12 @@ func TestAliveShouldReturnTheExpectedValue(t *testing.T) {
 		t.Fatalf("Expecting 10 alive, got %v", w.CountAlive())
 	}
 }
+
+func TestRandomInitializer(t *testing.T) {
+	w := Random(10, func() bool { return true })
+	alive := w.CountAlive()
+	if alive != 100 {
+		t.Errorf("Expected 100 alive, got %v", alive)
+	}
+
+}

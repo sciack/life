@@ -81,3 +81,20 @@ func cellsToString(cells []tcell.SimCell) string {
 	}
 	return string(runes)
 }
+
+func TestDrawTextHigh(t *testing.T) {
+	p, screen := painterForTesting()
+	expected := "Text"
+	p.DrawTextHigh(0, 0, expected)
+	p.EndDrawing()
+	cells, _, _ := screen.GetContents()
+	style := cells[0].Style
+	got := cellsToString(cells[:len(expected)])
+
+	if got != expected {
+		t.Errorf("Expected %q got %q", expected, got)
+	}
+	if style != p.alive {
+		t.Errorf("Expected style %q, got %q", p.defStyle, style)
+	}
+}

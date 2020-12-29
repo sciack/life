@@ -108,6 +108,7 @@ func (d *Painter) DrawText(x, y int, text string) {
 	}
 }
 
+// DrawTextHigh dsame as DrawText but with the same color as Alive
 func (d *Painter) DrawTextHigh(x, y int, text string) {
 	for index, r := range []rune(text) {
 		d.screen.SetContent(x+index, y, r, nil, d.alive)

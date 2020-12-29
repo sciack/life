@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"math/rand"
+	"strconv"
 	"time"
 
 	"github.com/sciack/life/painter"
@@ -16,9 +16,14 @@ const (
 	THRESHOLD = 97
 )
 
-func printText(w *world.World, paint *painter.Painter, iteration int) {
-	paint.DrawText(0, 2, fmt.Sprintf("Iteration %v", iteration))
+func drawHeader(paint *painter.Painter, iteration int) {
+	paint.DrawText(0, 2, "Iteration")
+	paint.DrawTextHigh(len("Iteration")+1, 2, strconv.Itoa(iteration))
+
+}
+func drawWorld(w *world.World, paint *painter.Painter) {
 	paint.StartDrawing(SIZE+1, 4)
+
 	for y := 0; y < SIZE; y++ {
 		for x := 0; x < SIZE; x++ {
 			if w.IsAlive(x, y) {
@@ -41,10 +46,12 @@ func main() {
 	}
 
 	w := world.Random(SIZE, generator)
-	for i := 0; i < 100 && w.CountAlive() > 0; i++ {
-		printText(w, paint, i)
+	for i := 1; i <= 100 && w.CountAlive() > 0; i++ {
+		drawHeader(paint, i)
+		drawWorld(w, paint)
 		time.Sleep(200 * time.Millisecond)
 		w = w.Next()
 	}
 
+	paint.EndDrawing()
 }

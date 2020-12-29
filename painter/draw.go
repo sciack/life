@@ -34,6 +34,7 @@ func New() *Painter {
 func (d *Painter) drawBox(x1, y1, x2, y2 int) {
 	s := d.screen
 	style := d.defStyle
+	x2 = x2 * 2
 	if y2 < y1 {
 		y1, y2 = y2, y1
 	}
@@ -75,12 +76,18 @@ func (d *Painter) Clear() {
 
 // DrawAlive draw an alive cell
 func (d *Painter) DrawAlive(x, y int) {
-	d.screen.SetContent(x+1, y+1+d.vOffset, tcell.RuneCkBoard, nil, d.alive)
+	d.drawSymbol(x, y, tcell.RuneCkBoard, d.alive)
+}
+
+func (d *Painter) drawSymbol(x, y int, symbol rune, style tcell.Style) {
+	xnorm := x*2 + 1 // zero is the border
+	d.screen.SetContent(xnorm, y+1+d.vOffset, symbol, nil, style)
+	d.screen.SetContent(xnorm+1, y+1+d.vOffset, symbol, nil, style)
 }
 
 //DrawEmpty draw an empty cell
 func (d *Painter) DrawEmpty(x, y int) {
-	d.screen.SetContent(x+1, y+1+d.vOffset, ' ', nil, d.defStyle)
+	d.drawSymbol(x, y, ' ', d.defStyle)
 }
 
 //StartDrawing start an empty canvass read for the drawing
@@ -98,5 +105,11 @@ func (d *Painter) EndDrawing() {
 func (d *Painter) DrawText(x, y int, text string) {
 	for index, r := range []rune(text) {
 		d.screen.SetContent(x+index, y, r, nil, d.defStyle)
+	}
+}
+
+func (d *Painter) DrawTextHigh(x, y int, text string) {
+	for index, r := range []rune(text) {
+		d.screen.SetContent(x+index, y, r, nil, d.alive)
 	}
 }

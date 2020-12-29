@@ -11,6 +11,8 @@ type World struct {
 	size   int
 }
 
+// Generator function type that give a generator or random number, in future could have
+// the x and y as parameter, so can have logic based on position
 type Generator func() bool
 
 // Max returns the larger of x or y.

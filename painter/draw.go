@@ -33,6 +33,11 @@ func New() *Painter {
 	return &Painter{screen: s, defStyle: defStyle, alive: alive, hOffset: 20}
 }
 
+//ScreenSize return the size available
+func (d *Painter) ScreenSize() (int, int) {
+	return d.screen.Size()
+}
+
 func (d *Painter) drawBox(x1, y1, x2, y2 int) {
 	s := d.screen
 	style := d.defStyle
@@ -102,6 +107,8 @@ func (d *Painter) StartDrawing(size, vOffset int) {
 
 // EndDrawing show the changes
 func (d *Painter) EndDrawing() {
+	var _, height = d.screen.Size()
+	d.screen.SetContent(0, height-1, ' ', nil, d.defStyle)
 	d.screen.Show()
 }
 

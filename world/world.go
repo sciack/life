@@ -8,7 +8,7 @@ const (
 // World represent the current world in game of life
 type World struct {
 	matrix [][]int
-	size   int
+	Size   int
 }
 
 // Generator function type that give a generator or random number, in future could have
@@ -42,15 +42,15 @@ func NewWorld(size int) *World {
 		slice = append(slice, line)
 	}
 	return &World{
-		size:   size,
+		Size:   size,
 		matrix: slice,
 	}
 }
 
 func (w *World) countNeighbour(x, y int) int {
 	neightbour := 0
-	for i := max(x-1, 0); i < min(x+2, w.size); i++ {
-		for k := max(y-1, 0); k < min(y+2, w.size); k++ {
+	for i := max(x-1, 0); i < min(x+2, w.Size); i++ {
+		for k := max(y-1, 0); k < min(y+2, w.Size); k++ {
 			if i == x && k == y {
 				continue
 			}
@@ -84,9 +84,9 @@ func (w *World) IsAlive(x, y int) bool {
 
 // Next will give the next world configuration
 func (w *World) Next() *World {
-	newWorld := NewWorld(w.size)
-	for x := 0; x < w.size; x++ {
-		for y := 0; y < w.size; y++ {
+	newWorld := NewWorld(w.Size)
+	for x := 0; x < w.Size; x++ {
+		for y := 0; y < w.Size; y++ {
 			if w.canSurvive(x, y) && w.IsAlive(x, y) {
 				newWorld.SetState(x, y, w.IsAlive(x, y))
 			} else if w.willBorn(x, y) {

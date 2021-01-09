@@ -9,8 +9,8 @@ func TestCanCreateWorld(t *testing.T) {
 	if got == nil {
 		t.Error("Unable to create the world with size of 10")
 	}
-	if got.size != 10 {
-		t.Errorf("Expecting size of 10 got %v", got.size)
+	if got.Size != 10 {
+		t.Errorf("Expecting size of 10 got %v", got.Size)
 	}
 }
 

@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	// size is the size of the grid
+	// SIZE is the size of the grid
 	SIZE = 15
 	// THRESHOLD tune the random grid population, higher the number less populated is the grid (<100)
 	THRESHOLD = 97

@@ -13,7 +13,7 @@ const (
 	// SIZE is the size of the grid
 	SIZE = 15
 	// THRESHOLD tune the random grid population, higher the number less populated is the grid (<100)
-	THRESHOLD = 98
+	THRESHOLD = 80
 )
 
 func drawHeader(paint *painter.Painter, iteration int) {

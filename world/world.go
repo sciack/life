@@ -67,7 +67,7 @@ func (w *World) canSurvive(x, y int) bool {
 
 func (w *World) willBorn(x, y int) bool {
 	neightbour := w.countNeighbour(x, y)
-	return neightbour == 2
+	return neightbour == 3
 }
 
 func (w *World) SetState(x, y int, alive bool) {

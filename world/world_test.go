@@ -36,11 +36,12 @@ func TestWillBorn(t *testing.T) {
 	got := NewWorld(3)
 	got.matrix[0][0] = 1
 	got.matrix[0][1] = 1
+	got.matrix[0][2] = 1
 
 	if got.willBorn(1, 1) == false {
 		t.Errorf("Expecting element in 1 1 will born, %v", got.matrix)
 	}
-	if got.willBorn(0, 1) == false {
+	if got.willBorn(0, 1) == true {
 		t.Errorf("Expecting element in 1 0 will born, %v", got.matrix)
 	}
 
@@ -53,21 +54,17 @@ func TestNext(t *testing.T) {
 	got := NewWorld(3)
 	got.SetState(0, 0, true)
 	got.SetState(1, 0, true)
-	got.SetState(2, 0, true)
 	got.SetState(0, 1, true)
 
 	got = got.Next()
 	if !got.IsAlive(0, 0) {
 		t.Errorf("Element in 0 0 must be alive, with configuration %v", got.matrix)
 	}
-	if got.IsAlive(1, 1) {
-		t.Errorf("Expecting element in 1 1 will not born, %v", got.matrix)
-	}
-	if !got.IsAlive(2, 1) {
-		t.Errorf("Expecting element in 1 2 will born, %v", got.matrix)
+	if !got.IsAlive(1, 1) {
+		t.Errorf("Expecting element in 1 1 will born, %v", got.matrix)
 	}
 
-	if got.matrix[1][1] != FREE {
+	if got.matrix[2][2] != FREE {
 		t.Errorf("Expecting element in 2 2 is still free, %v", got.matrix)
 	}
 }

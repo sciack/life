@@ -2,8 +2,9 @@ package painter
 
 import (
 	"log"
+    "os"
 
-	"github.com/gdamore/tcell/v2"
+    "github.com/gdamore/tcell/v2"
 )
 
 // Painter struct, contain the reference to the screen and other useful information
@@ -26,6 +27,7 @@ func New() *Painter {
 	}
 	defStyle := tcell.StyleDefault.Background(tcell.ColorReset).Foreground(tcell.ColorReset)
 	alive := tcell.StyleDefault.Foreground(tcell.ColorLime).Background(tcell.ColorReset)
+
 	s.SetStyle(defStyle)
 	s.DisablePaste()
 	s.Clear()
@@ -36,6 +38,19 @@ func New() *Painter {
 //ScreenSize return the size available
 func (d *Painter) ScreenSize() (int, int) {
 	return d.screen.Size()
+}
+
+func (d *Painter) Interrupted()  {
+    for d.screen.HasPendingEvent() {
+        var event = d.screen.PollEvent()
+        switch event := event.(type) {
+        case *tcell.EventKey:
+            if event.Key() == tcell.KeyCtrlC {
+                d.EndDrawing()
+                os.Exit(0)
+            }
+        }
+    }
 }
 
 func (d *Painter) drawBox(x1, y1, x2, y2 int) {

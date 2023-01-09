@@ -1,14 +1,17 @@
 package painter
 
 import (
-	"testing"
+    "log"
+    "testing"
 
 	"github.com/gdamore/tcell/v2"
 )
 
 func painterForTesting() (*Painter, tcell.SimulationScreen) {
 	screen := tcell.NewSimulationScreen("utf-8")
-	screen.Init()
+    if err := screen.Init(); err != nil {
+        log.Fatalf("%+v", err)
+    }
 	defStyle := tcell.StyleDefault.Background(tcell.ColorReset).Foreground(tcell.ColorReset)
 	alive := tcell.StyleDefault.Foreground(tcell.ColorLime).Background(tcell.ColorReset)
 	return &Painter{
@@ -76,7 +79,7 @@ func TestDrawText(t *testing.T) {
 }
 
 func cellsToString(cells []tcell.SimCell) string {
-	runes := []rune{}
+	var runes []rune
 	for _, cell := range cells {
 		runes = append(runes, cell.Runes[0])
 	}

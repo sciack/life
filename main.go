@@ -63,6 +63,7 @@ func main() {
 		drawHeader(paint, i)
 		drawWorld(w, paint)
 		time.Sleep(200 * time.Millisecond)
+        paint.Interrupted()
 		w = w.Next()
 	}
 

@@ -45,7 +45,7 @@ func (d *Painter) Interrupted()  {
         var event = d.screen.PollEvent()
         switch event := event.(type) {
         case *tcell.EventKey:
-            if event.Key() == tcell.KeyCtrlC {
+            if event.Key() == tcell.KeyCtrlC || event.Key() == tcell.KeyCtrlD {
                 d.EndDrawing()
                 os.Exit(0)
             }

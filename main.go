@@ -11,9 +11,11 @@ import (
 
 const (
 	// SIZE is the size of the grid
-	SIZE = 15
+	SIZE = 20
 	// THRESHOLD tune the random grid population, higher the number less populated is the grid (<100)
 	THRESHOLD = 80
+
+    ITERATION = 1000
 )
 
 func drawHeader(paint *painter.Painter, iteration int) {
@@ -56,7 +58,7 @@ func main() {
 	}
 
 	w := world.Random(size-6, generator)
-	for i := 1; i <= 100 && w.CountAlive() > 0; i++ {
+	for i := 1; i <= ITERATION && w.CountAlive() > 0; i++ {
 
 		drawHeader(paint, i)
 		drawWorld(w, paint)

@@ -49,17 +49,22 @@ func NewWorld(size int) *World {
 
 func (w *World) countNeighbour(x, y int) int {
 	neightbour := 0
-	for i := max(x-1, 0); i < min(x+2, w.Size); i++ {
-		for k := max(y-1, 0); k < min(y+2, w.Size); k++ {
-			if i == x && k == y {
+	for i := x-1; i < x+2; i++ {
+		for j := y-1; j < y+2; j++ {
+			if i == x && j == y {
 				continue
 			}
-			neightbour += w.matrix[k][i]
+			neightbour += w.valueAt(i, j)
 		}
 	}
 	return neightbour
 }
 
+func (w *World) valueAt(x, y int) int {
+    var normX = (x + w.Size) % w.Size
+    var normY = (y + w.Size) % w.Size
+    return w.matrix[normY][normX]
+}
 func (w *World) canSurvive(x, y int) bool {
 	neightbour := w.countNeighbour(x, y)
 	return neightbour == 2 || neightbour == 3
@@ -77,6 +82,7 @@ func (w *World) SetState(x, y int, alive bool) {
 		w.matrix[y][x] = FREE
 	}
 }
+
 
 func (w *World) IsAlive(x, y int) bool {
 	return w.matrix[y][x] == ALIVE

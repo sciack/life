@@ -27,9 +27,6 @@ func TestCanSurvive(t *testing.T) {
 		t.Errorf("Expecting element in 0 0 can survive, %v", got.matrix)
 	}
 
-	if got.canSurvive(2, 2) == true {
-		t.Errorf("Expecting element in 2 2 cannot survive, %v", got.matrix)
-	}
 }
 
 func TestWillBorn(t *testing.T) {
@@ -38,16 +35,28 @@ func TestWillBorn(t *testing.T) {
 	got.matrix[0][1] = 1
 	got.matrix[0][2] = 1
 
-	if got.willBorn(1, 1) == false {
+	if !got.willBorn(1, 1) {
 		t.Errorf("Expecting element in 1 1 will born, %v", got.matrix)
 	}
-	if got.willBorn(0, 1) == true {
+	if !got.willBorn(0, 1)  {
 		t.Errorf("Expecting element in 1 0 will born, %v", got.matrix)
 	}
 
-	if got.canSurvive(2, 2) == true {
-		t.Errorf("Expecting element in 2 2 is still free, %v", got.matrix)
-	}
+}
+
+func TestWillBornInToroWorld(t *testing.T) {
+    got := NewWorld(3)
+    got.SetState(0,0, true)
+    got.SetState(0,2, true)
+    got.SetState(2,1, true)
+
+    if !got.willBorn(0, 1) {
+        t.Errorf("Expecting element in 1 0 will born, %v", got.matrix)
+    }
+    if !got.willBorn(1, 1)  {
+        t.Errorf("Expecting element in 1 1 will born, %v", got.matrix)
+    }
+
 }
 
 func TestNext(t *testing.T) {
@@ -64,9 +73,7 @@ func TestNext(t *testing.T) {
 		t.Errorf("Expecting element in 1 1 will born, %v", got.matrix)
 	}
 
-	if got.matrix[2][2] != FREE {
-		t.Errorf("Expecting element in 2 2 is still free, %v", got.matrix)
-	}
+
 }
 
 func TestAliveShouldBeZeroAtStart(t *testing.T) {

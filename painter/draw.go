@@ -32,16 +32,17 @@ func New() *Painter {
 	s.DisablePaste()
 	s.Clear()
 
-	return &Painter{screen: s, defStyle: defStyle, alive: alive, hOffset: 20, vOffset: 6}
+	return &Painter{screen: s, defStyle: defStyle, alive: alive, hOffset: 20, vOffset: 3}
 }
 
 // GridSize return the size available
 func (d *Painter) GridSize() (int, int) {
 	var x, y = d.screen.Size()
-	if x <= d.hOffset && y <= d.vOffset {
-		log.Fatalf("Screen size is to small, must be at least: %d %d", x, y)
+	if x <= d.hOffset && y < d.vOffset + 2 {
+
+		log.Default().Fatalf("Screen size is to small, must be at least: %d %d", x, y)
 	}
-	return x - d.hOffset, y - d.vOffset
+	return x - d.hOffset, y - d.vOffset - 2
 }
 
 func (d *Painter) Interrupted() {
@@ -149,5 +150,7 @@ func (d *Painter) DrawTextHigh(x, y int, text string) {
 }
 
 func (d *Painter) EndSession() {
-	//empty method help finalizing everything, BUT if we use Screen.Fini() clear everything and is not what I wont
+	var _, size = d.screen.Size()
+	d.DrawText(-d.hOffset, size-1, "User exit requested")
+	d.screen.Show()
 }

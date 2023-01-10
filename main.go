@@ -15,13 +15,14 @@ const (
 )
 
 func drawHeader(paint *painter.Painter, iteration int) {
-	paint.DrawText(0, 2, "Iteration")
-	paint.DrawTextHigh(len("Iteration")+1, 2, strconv.Itoa(iteration))
+	paint.DrawText(0, 1, "Iteration")
+	paint.DrawTextHigh(len("Iteration")+1, 1, strconv.Itoa(iteration))
 
 }
 func drawWorld(w *world.World, paint *painter.Painter) {
 	var size = w.Size
-	paint.StartDrawing(size+1, 4)
+	paint.StartDrawing(size+1, 3)
+    drawHeader(paint, w.Generation())
 
 	for y := 0; y < size; y++ {
 		for x := 0; x < size; x++ {
@@ -59,15 +60,13 @@ func main() {
 	rand.Seed(time.Now().UnixNano())
 
 	var worlds = make(chan *world.World, 5)
-	var i = 0
+
 	go emit(worlds, size)
 	for w := range worlds {
-		drawHeader(paint, i)
 		drawWorld(w, paint)
         time.Sleep(100 * time.Millisecond)
 		paint.Interrupted()
-		i += 1
-	}
+    }
 
 	paint.EndDrawing()
 	paint.EndSession()

@@ -7,20 +7,20 @@ const (
 
 // World represent the current world in game of life
 type World struct {
-	matrix [][]int
-	Size   int
+	matrix     [][]int
+	Size       int
+	generation int
 }
 
 // Generator function type that give a generator or random number, in future could have
 // the x and y as parameter, so can have logic based on position
 type Generator func() bool
 
-
 // NewWorld create a world struct with the predefined size
 func NewWorld(size int) *World {
-	slice := [][]int{}
+	var slice [][]int
 	for i := 0; i < size; i++ {
-		line := []int{}
+		var line []int
 		for k := 0; k < size; k++ {
 			line = append(line, 0)
 		}
@@ -29,13 +29,14 @@ func NewWorld(size int) *World {
 	return &World{
 		Size:   size,
 		matrix: slice,
+        generation: 0,
 	}
 }
 
 func (w *World) countNeighbour(x, y int) int {
 	neightbour := 0
-	for i := x-1; i < x+2; i++ {
-		for j := y-1; j < y+2; j++ {
+	for i := x - 1; i < x+2; i++ {
+		for j := y - 1; j < y+2; j++ {
 			if i == x && j == y {
 				continue
 			}
@@ -46,9 +47,9 @@ func (w *World) countNeighbour(x, y int) int {
 }
 
 func (w *World) valueAt(x, y int) int {
-    var normX = (x + w.Size) % w.Size
-    var normY = (y + w.Size) % w.Size
-    return w.matrix[normY][normX]
+	var normX = (x + w.Size) % w.Size
+	var normY = (y + w.Size) % w.Size
+	return w.matrix[normY][normX]
 }
 func (w *World) canSurvive(x, y int) bool {
 	neightbour := w.countNeighbour(x, y)
@@ -68,7 +69,6 @@ func (w *World) SetState(x, y int, alive bool) {
 	}
 }
 
-
 func (w *World) IsAlive(x, y int) bool {
 	return w.matrix[y][x] == ALIVE
 }
@@ -87,6 +87,7 @@ func (w *World) Next() *World {
 			}
 		}
 	}
+    newWorld.generation = w.generation + 1
 	return newWorld
 }
 
@@ -110,4 +111,8 @@ func (w *World) CountAlive() int {
 
 	}
 	return alive
+}
+
+func (w *World) Generation() int {
+    return w.generation
 }

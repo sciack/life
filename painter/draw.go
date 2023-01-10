@@ -2,9 +2,9 @@ package painter
 
 import (
 	"log"
-    "os"
+	"os"
 
-    "github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v2"
 )
 
 // Painter struct, contain the reference to the screen and other useful information
@@ -16,7 +16,7 @@ type Painter struct {
 	hOffset  int
 }
 
-//New create a new Painter struct containing the screen and other useful information
+// New create a new Painter struct containing the screen and other useful information
 func New() *Painter {
 	s, err := tcell.NewScreen()
 	if err != nil {
@@ -32,25 +32,30 @@ func New() *Painter {
 	s.DisablePaste()
 	s.Clear()
 
-	return &Painter{screen: s, defStyle: defStyle, alive: alive, hOffset: 20}
+	return &Painter{screen: s, defStyle: defStyle, alive: alive, hOffset: 20, vOffset: 6}
 }
 
-//ScreenSize return the size available
-func (d *Painter) ScreenSize() (int, int) {
-	return d.screen.Size()
+// GridSize return the size available
+func (d *Painter) GridSize() (int, int) {
+	var x, y = d.screen.Size()
+	if x <= d.hOffset && y <= d.vOffset {
+		log.Fatalf("Screen size is to small, must be at least: %d %d", x, y)
+	}
+	return x - d.hOffset, y - d.vOffset
 }
 
-func (d *Painter) Interrupted()  {
-    for d.screen.HasPendingEvent() {
-        var event = d.screen.PollEvent()
-        switch event := event.(type) {
-        case *tcell.EventKey:
-            if event.Key() == tcell.KeyCtrlC || event.Key() == tcell.KeyCtrlD {
-                d.EndDrawing()
-                os.Exit(0)
-            }
-        }
-    }
+func (d *Painter) Interrupted() {
+	for d.screen.HasPendingEvent() {
+		var event = d.screen.PollEvent()
+		switch event := event.(type) {
+		case *tcell.EventKey:
+			if event.Key() == tcell.KeyCtrlC || event.Key() == tcell.KeyCtrlD {
+				d.EndDrawing()
+				d.EndSession()
+				os.Exit(0)
+			}
+		}
+	}
 }
 
 func (d *Painter) drawBox(x1, y1, x2, y2 int) {
@@ -109,12 +114,12 @@ func (d *Painter) drawSymbol(x, y int, symbol rune, style tcell.Style) {
 	d.screen.SetContent(xnorm+1, y+1+d.vOffset, symbol, nil, style)
 }
 
-//DrawEmpty draw an empty cell
+// DrawEmpty draw an empty cell
 func (d *Painter) DrawEmpty(x, y int) {
 	d.drawSymbol(x, y, ' ', d.defStyle)
 }
 
-//StartDrawing start an empty canvass read for the drawing
+// StartDrawing start an empty canvass read for the drawing
 func (d *Painter) StartDrawing(size, vOffset int) {
 	d.vOffset = vOffset
 	d.drawBox(0, vOffset, size, size+vOffset)
@@ -141,4 +146,8 @@ func (d *Painter) DrawTextHigh(x, y int, text string) {
 	for index, r := range []rune(text) {
 		d.screen.SetContent(x+index, y, r, nil, d.alive)
 	}
+}
+
+func (d *Painter) EndSession() {
+	//empty method help finalizing everything, BUT if we use Screen.Fini() clear everything and is not what I wont
 }

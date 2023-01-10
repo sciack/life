@@ -1,21 +1,17 @@
 package main
 
 import (
-	"math/rand"
-	"strconv"
-	"time"
+    "math/rand"
+    "strconv"
+    "time"
 
-	"github.com/sciack/life/painter"
-	"github.com/sciack/life/world"
+    "github.com/sciack/life/painter"
+    "github.com/sciack/life/world"
 )
 
 const (
-	// SIZE is the size of the grid
-	SIZE = 20
 	// THRESHOLD tune the random grid population, higher the number less populated is the grid (<100)
 	THRESHOLD = 80
-
-    ITERATION = 1000
 )
 
 func drawHeader(paint *painter.Painter, iteration int) {
@@ -40,32 +36,47 @@ func drawWorld(w *world.World, paint *painter.Painter) {
 	paint.EndDrawing()
 }
 
+func randomGenerator() bool {
+    return rand.Intn(100) >= THRESHOLD
+}
+
+func emit(worlds chan *world.World, size int) {
+	w := world.Random(size, randomGenerator)
+	worlds <- w
+	for w.CountAlive() > 0 {
+		worlds <- w
+		w = w.Next()
+	}
+	close(worlds)
+}
+
 func main() {
 	paint := painter.New()
-	var width, height = paint.ScreenSize()
+	var width, height = paint.GridSize()
 
-	var size = 0
-	if width < height {
-		size = width
-	} else {
-		size = height
-	}
+	var size = Min(width, height)
 
 	rand.Seed(time.Now().UnixNano())
 
-	generator := func() bool {
-		return rand.Intn(100) >= THRESHOLD
-	}
-
-	w := world.Random(size-6, generator)
-	for i := 1; i <= ITERATION && w.CountAlive() > 0; i++ {
-
+	var worlds = make(chan *world.World, 5)
+	var i = 0
+	go emit(worlds, size)
+	for w := range worlds {
 		drawHeader(paint, i)
 		drawWorld(w, paint)
-		time.Sleep(200 * time.Millisecond)
-        paint.Interrupted()
-		w = w.Next()
+        time.Sleep(100 * time.Millisecond)
+		paint.Interrupted()
+		i += 1
 	}
 
 	paint.EndDrawing()
+	paint.EndSession()
+}
+
+
+func Min(x, y int) int {
+    if x > y {
+        return y
+    }
+    return x
 }

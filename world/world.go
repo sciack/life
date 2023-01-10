@@ -15,21 +15,6 @@ type World struct {
 // the x and y as parameter, so can have logic based on position
 type Generator func() bool
 
-// Max returns the larger of x or y.
-func max(x, y int) int {
-	if x < y {
-		return y
-	}
-	return x
-}
-
-// Min returns the smaller of x or y.
-func min(x, y int) int {
-	if x > y {
-		return y
-	}
-	return x
-}
 
 // NewWorld create a world struct with the predefined size
 func NewWorld(size int) *World {
